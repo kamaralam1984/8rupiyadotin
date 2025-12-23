@@ -1,0 +1,23 @@
+[
+  {
+    "id": "q1",
+    "question": "India ka Constitution kab adopt kiya gaya tha?",
+    "options": [
+      "26 January 1950",
+      "26 November 1949",
+      "15 August 1947",
+      "2 October 1950"
+    ],
+    "answerIndex": 1,
+    "subject": "Polity"
+  },
+  {
+    "id": "q2",
+    "question": "Lok Sabha ka maximum strength (article ke mutabik) kitna hai?",
+    "options": ["452", "542", "552", "562"],
+    "answerIndex": 2,
+    "subject": "Polity"
+  }
+]
+
+

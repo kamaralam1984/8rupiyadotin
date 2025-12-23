@@ -1,0 +1,128 @@
+[
+  {
+    "id": "upsc-history-1",
+    "question": "Modern Indian History: 1857 ke Revolt ka main cause kya tha?",
+    "options": [
+      "Religious reforms",
+      "Political dissatisfaction",
+      "Economic exploitation",
+      "Military grievances (Enfield rifle cartridges, pay, promotion, etc.)"
+    ],
+    "answerIndex": 3,
+    "subject": "UPSC - History",
+    "translations": {
+      "hi": {
+        "question": "आधुनिक भारतीय इतिहास: 1857 के विद्रोह का मुख्य कारण क्या था?",
+        "options": [
+          "धार्मिक सुधार",
+          "राजनैतिक असंतोष",
+          "आर्थिक शोषण",
+          "सैनिक असंतोष (एनफील्ड राइफल की कारतूस, वेतन, प्रोमोशन आदि)"
+        ]
+      }
+    }
+  },
+  {
+    "id": "upsc-history-2",
+    "question": "Indian National Congress ka establishment kis saal hua?",
+    "options": ["1880", "1885", "1890", "1905"],
+    "answerIndex": 1,
+    "subject": "UPSC - History",
+    "translations": {
+      "hi": {
+        "question": "इंडियन नेशनल कॉंग्रेस की स्थापना किस वर्ष हुई?",
+        "options": ["1880", "1885", "1890", "1905"]
+      }
+    }
+  },
+  {
+    "id": "upsc-polity-1",
+    "question": "Fundamental Rights Constitution ke kaun se Part me diye gaye hain?",
+    "options": ["Part I", "Part II", "Part III", "Part IV"],
+    "answerIndex": 2,
+    "subject": "UPSC - Polity",
+    "translations": {
+      "hi": {
+        "question": "मौलिक अधिकार संविधान के किस भाग में दिए गए हैं?",
+        "options": ["भाग I", "भाग II", "भाग III", "भाग IV"]
+      }
+    }
+  },
+  {
+    "id": "upsc-polity-2",
+    "question": "Directive Principles of State Policy kis country ke Constitution se liye gaye hain?",
+    "options": ["USA", "UK", "Ireland", "Japan"],
+    "answerIndex": 2,
+    "subject": "UPSC - Polity",
+    "translations": {
+      "hi": {
+        "question": "राज्य के नीति निदेशक सिद्धांत किस देश के संविधान से लिए गए हैं?",
+        "options": ["अमेरिका", "यूके", "आयरलैंड", "जापान"]
+      }
+    }
+  },
+  {
+    "id": "class10-maths-1",
+    "question": "Ek right triangle me hypotenuse h h, legs a aur b hain. Pythagoras theorem kya kehti hai?",
+    "options": ["a² + b² = h²", "a² - b² = h²", "2ab = h²", "a² + h² = b²"],
+    "answerIndex": 0,
+    "subject": "Class 10 - Maths",
+    "translations": {
+      "hi": {
+        "question": "एक समकोण त्रिभुज में कर्ण h है और भुजाएँ a और b हैं। पाइथागोरस प्रमेय क्या कहती है?",
+        "options": ["a² + b² = h²", "a² - b² = h²", "2ab = h²", "a² + h² = b²"]
+      }
+    }
+  },
+  {
+    "id": "class10-science-1",
+    "question": "Photosynthesis me kaun sa pigment light absorb karta hai?",
+    "options": ["Haemoglobin", "Chlorophyll", "Keratin", "Melanin"],
+    "answerIndex": 1,
+    "subject": "Class 10 - Science",
+    "translations": {
+      "hi": {
+        "question": "प्रकाश संश्लेषण (Photosynthesis) में कौन सा रंजक (pigment) प्रकाश को absorb करता है?",
+        "options": ["हीमोग्लोबिन", "क्लोरोफिल", "केराटिन", "मेलानिन"]
+      }
+    }
+  },
+  {
+    "id": "class9-maths-1",
+    "question": "Simple interest ka formula kya hota hai?",
+    "options": ["SI = PRT", "SI = (P×R×T)/100", "SI = (P+R+T)/100", "SI = P/R×T"],
+    "answerIndex": 1,
+    "subject": "Class 9 - Maths",
+    "translations": {
+      "hi": {
+        "question": "साधारण ब्याज (Simple Interest) का सूत्र क्या होता है?",
+        "options": ["SI = PRT", "SI = (P×R×T)/100", "SI = (P+R+T)/100", "SI = P/R×T"]
+      }
+    }
+  },
+  {
+    "id": "class9-science-1",
+    "question": "Matter ke teen basic states kaun se hote hain?",
+    "options": [
+      "Solid, Liquid, Gas",
+      "Solid, Gas, Plasma",
+      "Liquid, Gas, Plasma",
+      "Plasma, BEC, Gas"
+    ],
+    "answerIndex": 0,
+    "subject": "Class 9 - Science",
+    "translations": {
+      "hi": {
+        "question": "पदार्थ (Matter) की तीन मूल अवस्थाएँ कौन सी होती हैं?",
+        "options": [
+          "Solid, Liquid, Gas",
+          "Solid, Gas, Plasma",
+          "Liquid, Gas, Plasma",
+          "Plasma, BEC, Gas"
+        ]
+      }
+    }
+  }
+]
+
+
