@@ -9,6 +9,7 @@ export default function LoginPage() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    role: "user" as "admin" | "agent" | "operator" | "user",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -31,6 +32,13 @@ export default function LoginPage() {
 
       if (!response.ok) {
         setError(data.error || "Login failed");
+        setLoading(false);
+        return;
+      }
+
+      // Verify role matches selected account type
+      if (data.user.role !== formData.role) {
+        setError(`This account is registered as ${data.user.role}, not ${formData.role}. Please select the correct account type.`);
         setLoading(false);
         return;
       }
@@ -74,6 +82,32 @@ export default function LoginPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label
+                htmlFor="role"
+                className="mb-2 block text-sm font-medium text-zinc-300"
+              >
+                Account Type
+              </label>
+              <select
+                id="role"
+                required
+                value={formData.role}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    role: e.target.value as "admin" | "agent" | "operator" | "user",
+                  })
+                }
+                className="w-full rounded-lg border border-amber-500/30 bg-zinc-800/50 px-4 py-3 text-white backdrop-blur-sm transition-all duration-300 focus:border-amber-500/60 focus:bg-zinc-800/70 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
+              >
+                <option value="user">User</option>
+                <option value="agent">Agent</option>
+                <option value="operator">Operator</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+
             <div>
               <label
                 htmlFor="email"

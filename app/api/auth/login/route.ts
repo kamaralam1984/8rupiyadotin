@@ -17,7 +17,7 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    const { email, password } = body;
+    const { email, password, role } = body;
 
     // Validation
     if (!email || !password) {
@@ -49,6 +49,14 @@ export async function POST(request: Request) {
     if (!user.isActive) {
       return NextResponse.json(
         { error: "Account is deactivated" },
+        { status: 403 }
+      );
+    }
+
+    // Verify role if provided
+    if (role && user.role !== role) {
+      return NextResponse.json(
+        { error: `This account is registered as ${user.role}, not ${role}. Please select the correct account type.` },
         { status: 403 }
       );
     }
