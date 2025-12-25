@@ -159,86 +159,131 @@ export default function Home() {
   const [categories, setCategories] = useState<string[]>([]);
   const [loadingCategories, setLoadingCategories] = useState(false);
 
-  // Get user location - Optimized with parallel requests
+  // Get user location
   const getNearby = async (lat: number, lng: number) => {
     try {
-      // Fetch all shops in parallel for faster loading
-      const [generalResponse, leftResponse, rightResponse, heroResponse] = await Promise.all([
-        fetch(`/api/nearby?lat=${lat}&lng=${lng}`),
-        fetch(`/api/nearby?lat=${lat}&lng=${lng}&rail=left`),
-        fetch(`/api/nearby?lat=${lat}&lng=${lng}&rail=right`),
-        fetch(`/api/nearby?lat=${lat}&lng=${lng}&rail=hero`),
-      ]);
+      // Fetch general nearby shops
+      const response = await fetch(`/api/nearby?lat=${lat}&lng=${lng}`);
+      const shops = await response.json();
+      console.log("General shops:", shops);
+      if (shops.error) {
+        console.error("API Error:", shops.error, shops.details);
+      } else {
+        setNearbyShopsData(Array.isArray(shops) ? shops : []);
+      }
 
-      const [shops, leftShops, rightShops, heroShopsData] = await Promise.all([
-        generalResponse.json(),
-        leftResponse.json(),
-        rightResponse.json(),
-        heroResponse.json(),
-      ]);
+      // Fetch left rail shops
+      const leftResponse = await fetch(`/api/nearby?lat=${lat}&lng=${lng}&rail=left`);
+      const leftShops = await leftResponse.json();
+      console.log("Left rail shops:", leftShops);
+      if (leftShops.error) {
+        console.error("Left Rail API Error:", leftShops.error);
+      } else {
+        setLeftRailShops(Array.isArray(leftShops) ? leftShops : []);
+      }
 
-      if (!shops.error) setNearbyShopsData(Array.isArray(shops) ? shops : []);
-      if (!leftShops.error) setLeftRailShops(Array.isArray(leftShops) ? leftShops : []);
-      if (!rightShops.error) setRightRailShops(Array.isArray(rightShops) ? rightShops : []);
-      if (!heroShopsData.error) setHeroShops(Array.isArray(heroShopsData) ? heroShopsData : []);
+      // Fetch right rail shops
+      const rightResponse = await fetch(`/api/nearby?lat=${lat}&lng=${lng}&rail=right`);
+      const rightShops = await rightResponse.json();
+      console.log("Right rail shops:", rightShops);
+      if (rightShops.error) {
+        console.error("Right Rail API Error:", rightShops.error);
+      } else {
+        setRightRailShops(Array.isArray(rightShops) ? rightShops : []);
+      }
+
+      // Fetch hero shops
+      const heroResponse = await fetch(`/api/nearby?lat=${lat}&lng=${lng}&rail=hero`);
+      const heroShopsData = await heroResponse.json();
+      console.log("Hero shops:", heroShopsData);
+      if (heroShopsData.error) {
+        console.error("Hero API Error:", heroShopsData.error);
+      } else {
+        setHeroShops(Array.isArray(heroShopsData) ? heroShopsData : []);
+      }
     } catch (error) {
       console.error("Error fetching nearby shops:", error);
     }
   };
 
-  // Fetch categories from database - Lazy load after initial render
+  // Fetch categories from database
   useEffect(() => {
-    // Delay category fetch to prioritize critical content
-    const timer = setTimeout(() => {
-      const fetchCategories = async () => {
-        setLoadingCategories(true);
-        try {
-          const response = await fetch("/api/shops/categories");
-          const data = await response.json();
-          if (data.error) {
-            setCategories([]);
-          } else {
-            setCategories(Array.isArray(data) ? data : []);
-          }
-        } catch (error) {
-          console.error("Error fetching categories:", error);
-          setCategories([]);
-        } finally {
-          setLoadingCategories(false);
+    const fetchCategories = async () => {
+      setLoadingCategories(true);
+      try {
+        const response = await fetch("/api/shops/categories");
+        const data = await response.json();
+        if (data.error) {
+          console.error("Error fetching categories:", data.error);
+          // Fallback to default categories
+          setCategories([
+            "Restaurant",
+            "Hotels",
+            "Electronics",
+            "Fashion",
+            "Wellness",
+            "Cafe",
+            "Fitness",
+            "Beauty",
+            "Healthcare",
+            "Education",
+            "Automotive",
+          ]);
+        } else {
+          setCategories(Array.isArray(data) ? data : []);
         }
-      };
-      fetchCategories();
-    }, 100); // Small delay to not block initial render
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        // Fallback to default categories
+        setCategories([
+          "Restaurant",
+          "Hotels",
+          "Electronics",
+          "Fashion",
+          "Wellness",
+          "Cafe",
+          "Fitness",
+          "Beauty",
+          "Healthcare",
+          "Education",
+          "Automotive",
+        ]);
+      } finally {
+        setLoadingCategories(false);
+      }
+    };
 
-    return () => clearTimeout(timer);
+    fetchCategories();
   }, []);
 
-  // Get user location and fetch nearby shops - Optimized for fast initial load
+  // Get user location and fetch nearby shops
   useEffect(() => {
-    // Use default location immediately for faster initial load
-    const defaultLat = 28.6139;
-    const defaultLng = 77.209;
-    setUserLocation({ lat: defaultLat, lng: defaultLng });
-    getNearby(defaultLat, defaultLng);
-
-    // Then try to get actual location in background
     if (navigator.geolocation) {
+      setLoadingLocation(true);
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           const lat = pos.coords.latitude;
           const lng = pos.coords.longitude;
           setUserLocation({ lat, lng });
           getNearby(lat, lng);
+          setLoadingLocation(false);
         },
         (error) => {
           console.error("Error getting location:", error);
-          // Keep using default location
-        },
-        {
-          timeout: 5000,
-          maximumAge: 300000, // Cache for 5 minutes
+          setLoadingLocation(false);
+          // Fallback to default location (Delhi)
+          const defaultLat = 28.6139;
+          const defaultLng = 77.209;
+          setUserLocation({ lat: defaultLat, lng: defaultLng });
+          getNearby(defaultLat, defaultLng);
         }
       );
+    } else {
+      // Fallback to default location
+      const defaultLat = 28.6139;
+      const defaultLng = 77.209;
+      setUserLocation({ lat: defaultLat, lng: defaultLng });
+      getNearby(defaultLat, defaultLng);
     }
   }, []);
 
