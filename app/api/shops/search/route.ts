@@ -13,41 +13,54 @@ export async function GET(request: Request) {
   const limit = parseInt(searchParams.get("limit") || "20");
 
   if (!MONGODB_URI) {
-    return NextResponse.json(
-      { error: "MongoDB not configured" },
-      { status: 500 }
-    );
+    console.warn("[API WARNING] MongoDB URI not configured - returning empty array");
+    return NextResponse.json([]);
   }
 
   let client: MongoClient | null = null;
 
   try {
+    console.log(`[API] Searching shops - category: ${category}, pincode: ${pincode}, search: ${search}`);
     client = new MongoClient(MONGODB_URI);
     await client.connect();
 
     const db = client.db(DB_NAME);
     const shopsCollection = db.collection("agentshops");
 
-    // Build search filter
+    // Build search filter - make paymentStatus optional
     const matchFilter: any = {
-      paymentStatus: "PAID",
+      $and: [
+        {
+          $or: [
+            { paymentStatus: "PAID" },
+            { paymentStatus: { $exists: false } },
+            { paymentStatus: null },
+          ],
+        },
+      ],
     };
 
     // Add search conditions
     if (category) {
-      matchFilter.category = { $regex: category, $options: "i" };
+      matchFilter.$and.push({
+        category: { $regex: category, $options: "i" },
+      });
     }
 
     if (pincode) {
-      matchFilter.pincode = pincode;
+      matchFilter.$and.push({
+        pincode: pincode,
+      });
     }
 
     if (search) {
-      matchFilter.$or = [
-        { shopName: { $regex: search, $options: "i" } },
-        { category: { $regex: search, $options: "i" } },
-        { address: { $regex: search, $options: "i" } },
-      ];
+      matchFilter.$and.push({
+        $or: [
+          { shopName: { $regex: search, $options: "i" } },
+          { category: { $regex: search, $options: "i" } },
+          { address: { $regex: search, $options: "i" } },
+        ],
+      });
     }
 
     // Find shops
@@ -81,16 +94,13 @@ export async function GET(request: Request) {
       ])
       .toArray();
 
+    console.log(`[API] Found ${shops.length} shops matching search criteria`);
     return NextResponse.json(shops);
   } catch (error) {
-    console.error("Error searching shops:", error);
-    return NextResponse.json(
-      {
-        error: "Failed to search shops",
-        details: error instanceof Error ? error.message : String(error),
-      },
-      { status: 500 }
-    );
+    console.error("[API ERROR] Error searching shops:", error);
+    console.error("[API ERROR] Returning empty array due to error");
+    // Return empty array instead of error to prevent frontend issues
+    return NextResponse.json([]);
   } finally {
     if (client) {
       await client.close();
