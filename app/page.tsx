@@ -158,6 +158,30 @@ export default function Home() {
   const [searchLoading, setSearchLoading] = useState(false);
   const [categories, setCategories] = useState<string[]>([]);
   const [loadingCategories, setLoadingCategories] = useState(false);
+  const [dbStatus, setDbStatus] = useState<"connected" | "disconnected" | "checking">("checking");
+
+  // Check database connection status
+  useEffect(() => {
+    const checkDbStatus = async () => {
+      try {
+        const response = await fetch("/api/health");
+        const data = await response.json();
+        if (data.mongodb?.connected) {
+          setDbStatus("connected");
+        } else {
+          setDbStatus("disconnected");
+        }
+      } catch (error) {
+        console.error("Error checking DB status:", error);
+        setDbStatus("disconnected");
+      }
+    };
+
+    checkDbStatus();
+    // Check every 30 seconds
+    const interval = setInterval(checkDbStatus, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Get user location
   const getNearby = async (lat: number, lng: number) => {
@@ -168,6 +192,7 @@ export default function Home() {
       console.log("General shops:", shops);
       if (shops.error) {
         console.error("API Error:", shops.error, shops.details);
+        setNearbyShopsData([]);
       } else {
         setNearbyShopsData(Array.isArray(shops) ? shops : []);
       }
@@ -178,6 +203,7 @@ export default function Home() {
       console.log("Left rail shops:", leftShops);
       if (leftShops.error) {
         console.error("Left Rail API Error:", leftShops.error);
+        setLeftRailShops([]);
       } else {
         setLeftRailShops(Array.isArray(leftShops) ? leftShops : []);
       }
@@ -188,6 +214,7 @@ export default function Home() {
       console.log("Right rail shops:", rightShops);
       if (rightShops.error) {
         console.error("Right Rail API Error:", rightShops.error);
+        setRightRailShops([]);
       } else {
         setRightRailShops(Array.isArray(rightShops) ? rightShops : []);
       }
@@ -198,11 +225,17 @@ export default function Home() {
       console.log("Hero shops:", heroShopsData);
       if (heroShopsData.error) {
         console.error("Hero API Error:", heroShopsData.error);
+        setHeroShops([]);
       } else {
         setHeroShops(Array.isArray(heroShopsData) ? heroShopsData : []);
       }
     } catch (error) {
       console.error("Error fetching nearby shops:", error);
+      // Set empty arrays on error to prevent UI issues
+      setNearbyShopsData([]);
+      setLeftRailShops([]);
+      setRightRailShops([]);
+      setHeroShops([]);
     }
   };
 
@@ -771,6 +804,49 @@ export default function Home() {
           {/* Right Rail */}
           <div className="hidden lg:block lg:col-span-2">
             <div className="sticky top-24 space-y-4">
+              {/* Database Connection Status */}
+              <div className="rounded-2xl border border-amber-500/20 bg-gradient-to-br from-zinc-800/40 via-zinc-800/30 to-zinc-900/40 p-4 backdrop-blur-xl shadow-xl shadow-amber-500/5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="relative">
+                      <div
+                        className={`h-3 w-3 rounded-full ${
+                          dbStatus === "connected"
+                            ? "bg-green-500"
+                            : dbStatus === "checking"
+                            ? "bg-yellow-500"
+                            : "bg-red-500"
+                        } ${
+                          dbStatus === "connected" ? "animate-pulse" : ""
+                        } shadow-lg`}
+                      >
+                        {dbStatus === "connected" && (
+                          <div className="absolute inset-0 h-3 w-3 animate-ping rounded-full bg-green-500 opacity-75"></div>
+                        )}
+                      </div>
+                    </div>
+                    <span className="text-sm font-medium text-white">
+                      Database
+                    </span>
+                  </div>
+                  <span
+                    className={`text-xs font-medium ${
+                      dbStatus === "connected"
+                        ? "text-green-400"
+                        : dbStatus === "checking"
+                        ? "text-yellow-400"
+                        : "text-red-400"
+                    }`}
+                  >
+                    {dbStatus === "connected"
+                      ? "Connected"
+                      : dbStatus === "checking"
+                      ? "Checking..."
+                      : "Disconnected"}
+                  </span>
+                </div>
+              </div>
+
               {/* Nearby Shops in Right Rail */}
               <div className="rounded-2xl border border-amber-500/20 bg-gradient-to-br from-zinc-800/40 via-zinc-800/30 to-zinc-900/40 p-6 backdrop-blur-xl shadow-xl shadow-amber-500/5">
                 <h3 className="mb-4 text-lg font-semibold text-white">Nearby Shops</h3>
